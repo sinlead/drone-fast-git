@@ -13,7 +13,7 @@ if [[ -d $LOCAL_REPO ]]; then
 else
     echo 'Local cached git repo dose not exist. Start cloning from remote...'
     mkdir -p $LOCAL_REPO
-    git clone $DRONE_REMOTE_URL $LOCAL_REPO
+    git clone $DRONE_GIT_HTTP_URL $LOCAL_REPO
     echo 'Done.'
 fi
 
