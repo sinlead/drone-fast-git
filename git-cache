@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -ex
+
+WORKDIR=`pwd`
+LOCAL_REPO="/var/git_local/$DRONE_REPO_NAME"
+
+echo "Workspace: $WORKDIR"
+echo "Local cahched repo path: $LOCAL_REPO"
+
+if [[ -d $LOCAL_REPO ]]; then
+    echo 'Local cached git repo exists.'
+else
+    echo 'Local cached git repo dose not exist. Start cloning from remote...'
+    mkdir -p $LOCAL_REPO
+    git clone $DRONE_REMOTE_URL $LOCAL_REPO
+    echo 'Done.'
+fi
+
+echo 'Update local cahched repo...'
+cd LOCAL_REPO
+git fetch --all
+echo 'Done.'
+
+echo 'Checkout commit from local cahched repo...'
+cd WORKDIR
+git clone "$LOCAL_REPO/.git"
+git checkout $DRONE_COMMIT
+echo 'Done.'
