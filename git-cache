@@ -18,14 +18,14 @@ fi
 
 echo 'Update local cahched repo...'
 cd $LOCAL_REPO
-git fetch --all
+git fetch
 echo 'Done.'
 
 echo 'Checkout commit from local cahched repo...'
 cd $WORKDIR
 
 if [[ -d $WORKDIR/.git ]]; then
-    git fetch --all
+    git fetch
 else
     git clone $DRONE_GIT_HTTP_URL .
 fi
