@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "machine ${CI_NETRC_MACHINE}" > "${HOME}/.netrc"
+echo "login ${CI_NETRC_USERNAME}" >> "${HOME}/.netrc"
+echo "password ${CI_NETRC_PASSWORD}" >> "${HOME}/.netrc"
+
 set -ex
 
 WORKDIR=`pwd`
