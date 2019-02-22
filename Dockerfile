@@ -7,4 +7,4 @@ RUN apk --update add bash && \
   rm /var/cache/apk/*
 
 COPY git-cache /bin/
-CMD exec /bin/git-cache
+CMD bash -l /bin/git-cache
