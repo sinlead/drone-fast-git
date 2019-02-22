@@ -27,7 +27,7 @@ cd $WORKDIR
 if [[ -d $WORKDIR/.git ]]; then
     git fetch --all
 else
-    git clone $DRONE_GIT_HTTP_URL $LOCAL_REPO
+    git clone $DRONE_GIT_HTTP_URL .
 fi
 
 git checkout $DRONE_COMMIT
