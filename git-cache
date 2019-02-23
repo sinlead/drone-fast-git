@@ -23,7 +23,10 @@ else
 fi
 
 echo 'Updating local cahched repo...'
-git fetch
+git fetch --all
+git checkout $DRONE_COMMIT_BRANCH
+git reset --hard origin/$DRONE_COMMIT_BRANCH
+git checkout $DRONE_COMMIT
 echo 'Done.'
 
 echo 'Checkout commit from local cahched repo...'
@@ -34,7 +37,10 @@ if [[ ! -d .git ]]; then
     git remote add origin $LOCAL_REPO
 fi
 
-git fetch
+git clean
+git fetch --all
+git checkout $DRONE_COMMIT_BRANCH
+git reset --hard origin/$DRONE_COMMIT_BRANCH
 git checkout $DRONE_COMMIT
 echo 'Done.'
 
