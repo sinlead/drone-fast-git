@@ -34,10 +34,10 @@ echo 'Checkout commit from local cahched repo...'
 cd $WORKDIR
 if [[ ! -d .git ]]; then
     git init
-    git remote add origin $LOCAL_REPO
+    git remote add origin $LOCAL_REPO/.git
 fi
 # overwrite old settings
-git remote set-url origin $LOCAL_REPO
+git remote set-url origin $LOCAL_REPO/.git
 
 git clean -f
 git fetch --all
