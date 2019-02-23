@@ -23,9 +23,7 @@ else
 fi
 
 echo 'Updating local cahched repo...'
-git fetch --all
-git checkout $DRONE_COMMIT_BRANCH
-git reset --hard origin/$DRONE_COMMIT_BRANCH
+git fetch origin ${DRONE_COMMIT_SHA}
 git checkout ${DRONE_COMMIT_SHA}
 echo 'Done.'
 
@@ -39,10 +37,7 @@ fi
 # overwrite old settings
 git remote set-url origin $LOCAL_REPO/.git
 
-git clean -f
-git fetch --all
-git checkout $DRONE_COMMIT_BRANCH
-git reset --hard origin/$DRONE_COMMIT_BRANCH
-git merge ${DRONE_COMMIT_SHA}
+git fetch origin ${DRONE_COMMIT_SHA}
+git reset ${DRONE_COMMIT_SHA} --hard
 echo 'Done.'
 
