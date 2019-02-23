@@ -12,27 +12,29 @@ LOCAL_REPO="/var/git_local/$DRONE_REPO_NAME"
 echo "Workspace: $WORKDIR"
 echo "Local cahched repo path: $LOCAL_REPO"
 
-if [[ -d $LOCAL_REPO/.git ]]; then
+cd $LOCAL_REPO
+if [[ -d .git ]]; then
     echo 'Local cached git repo exists.'
 else
-    echo 'Local cached git repo dose not exist. Start cloning from remote...'
-    git clone $DRONE_GIT_HTTP_URL $LOCAL_REPO
+    echo 'Local cached git repo dose not exist. Start init...'
+    git init
+    git remote add origin $DRONE_GIT_HTTP_URL
     echo 'Done.'
 fi
 
-echo 'Update local cahched repo...'
-cd $LOCAL_REPO
+echo 'Updating local cahched repo...'
 git fetch
 echo 'Done.'
 
 echo 'Checkout commit from local cahched repo...'
-cd $WORKDIR
 
-if [[ -d $WORKDIR/.git ]]; then
-    git fetch
-else
-    git clone $DRONE_GIT_HTTP_URL .
+cd $WORKDIR
+if [[ ! -d .git ]]; then
+    git init
+    git remote add origin $LOCAL_REPO
 fi
 
+git fetch
 git checkout $DRONE_COMMIT
 echo 'Done.'
+
