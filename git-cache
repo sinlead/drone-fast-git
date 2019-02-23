@@ -37,7 +37,7 @@ if [[ ! -d .git ]]; then
     git remote add origin $LOCAL_REPO
 fi
 
-git clean
+git clean -f
 git fetch --all
 git checkout $DRONE_COMMIT_BRANCH
 git reset --hard origin/$DRONE_COMMIT_BRANCH
