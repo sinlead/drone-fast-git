@@ -32,12 +32,13 @@ echo 'Checkout commit from local cahched repo...'
 cd $WORKDIR
 if [[ ! -d .git ]]; then
     git init
-    git remote add origin $LOCAL_REPO/.git
+    git remote add origin $DRONE_GIT_HTTP_URL
+    git remote add local-source $LOCAL_REPO/.git
 fi
 # overwrite old settings
-git remote set-url origin $LOCAL_REPO/.git
+git remote set-url local-source $LOCAL_REPO/.git
 
-git fetch origin ${DRONE_COMMIT_SHA}
+git fetch local-source ${DRONE_COMMIT_SHA}
 git reset ${DRONE_COMMIT_SHA} --hard
 echo 'Done.'
 
