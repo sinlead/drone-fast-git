@@ -12,6 +12,7 @@ LOCAL_REPO="/var/git_local/$DRONE_REPO_NAME"
 echo "Workspace: $WORKDIR"
 echo "Local cahched repo path: $LOCAL_REPO"
 
+mkdir -p $LOCAL_REPO
 cd $LOCAL_REPO
 if [[ -d .git ]]; then
     echo 'Local cached git repo exists.'
