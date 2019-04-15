@@ -26,7 +26,7 @@ fi
 echo 'Updating local cahched repo...'
 
 retry_times=0
-until [ $retry_times -ge 20]; do
+until [ $retry_times -ge 20 ]; do
     git fetch origin ${DRONE_COMMIT_SHA} && break
     # git checkout ${DRONE_COMMIT_SHA}
 
