@@ -18,8 +18,7 @@ if [[ -d .git ]]; then
     echo 'Local cached git repo exists.'
 else
     echo 'Local cached git repo dose not exist. Start init...'
-    git init
-    git remote add origin $DRONE_GIT_HTTP_URL
+    git clone $DRONE_GIT_HTTP_URL .
     echo 'Done.'
 fi
 
