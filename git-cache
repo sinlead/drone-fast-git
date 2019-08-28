@@ -4,47 +4,62 @@ echo "machine ${CI_NETRC_MACHINE}" > "${HOME}/.netrc"
 echo "login ${CI_NETRC_USERNAME}" >> "${HOME}/.netrc"
 echo "password ${CI_NETRC_PASSWORD}" >> "${HOME}/.netrc"
 
-set -ex
+set -e
 
 WORKDIR=`pwd`
-LOCAL_REPO="/var/git_local/$DRONE_REPO_NAME"
+LOCAL_REPO="/var/git_local/${DRONE_REPO_NAME}"
 
-echo "Workspace: $WORKDIR"
-echo "Local cahched repo path: $LOCAL_REPO"
+echo "Workspace: ${WORKDIR}"
+echo "Local cahched repo path: ${LOCAL_REPO}"
 
 mkdir -p $LOCAL_REPO
 cd $LOCAL_REPO
+
+CLONE_LOCK_PATH="/var/git_local/clone_lock/${DRONE_REPO_NAME}/"
+if [[ -d $CLONE_LOCK_PATH ]];
+then
+  echo "Another worker is cloning. Wait cloning to be done."
+
+  retry_times=0
+  until [ $retry_times -ge 180 ]; do
+      if [[ ! -d $CLONE_LOCK_PATH ]]; then
+        break
+      fi
+      retry_times=$[$retry_times+1]
+      sleep 10
+  done
+fi
+
 if [[ -d .git ]]; then
     echo 'Local cached git repo exists.'
 else
+    mkdir -p $CLONE_LOCK_PATH
     echo 'Local cached git repo dose not exist. Start init...'
-    git clone $DRONE_GIT_HTTP_URL .
+    git clone $DRONE_GIT_HTTP_URL $PWD
     echo 'Done.'
+    rmdir $CLONE_LOCK_PATH
 fi
 
 echo 'Updating local cahched repo...'
-
 retry_times=0
-until [ $retry_times -ge 20 ]; do
+until [ $retry_times -ge 30 ]; do
     git fetch origin ${DRONE_COMMIT_SHA} && git checkout ${DRONE_COMMIT_SHA} && break
     retry_times=$[$retry_times+1]
     sleep 10
 done
-
 echo 'Done.'
 
 echo 'Checkout commit from local cahched repo...'
-
 cd $WORKDIR
+LOCAL_SOURCE="${LOCAL_REPO}/.git"
 if [[ ! -d .git ]]; then
     git init
     git remote add origin $DRONE_GIT_HTTP_URL
-    git remote add local-source $LOCAL_REPO/.git
+    git remote add local-source $LOCAL_SOURCE
 fi
 # overwrite old settings
-git remote set-url local-source $LOCAL_REPO/.git
+git remote set-url local-source $LOCAL_SOURCE
 
 git fetch local-source ${DRONE_COMMIT_SHA}
 git reset ${DRONE_COMMIT_SHA} --hard
 echo 'Done.'
-
