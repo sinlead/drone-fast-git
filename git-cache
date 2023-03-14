@@ -15,7 +15,7 @@ echo "Local cached repo path: ${LOCAL_REPO}"
 
 mkdir -p $LOCAL_REPO
 cd $LOCAL_REPO
-
+## Clone
 CLONE_LOCK_PATH="/var/git_local/clone_lock/${DRONE_REPO_NAME}/"
 if [[ -d $CLONE_LOCK_PATH ]];
 then
@@ -43,7 +43,28 @@ else
         retry_times=$[$retry_times+1]
         sleep 10
     done
-    echo 'Fetch unshallow'
+    rmdir $CLONE_LOCK_PATH
+fi
+
+# Fetch unshallow
+REPO_SHALLOW_LOCK_PATH="/var/git_local/clone_lock/${DRONE_REPO_NAME}_shallow/"
+if [[ -d $REPO_SHALLOW_LOCK_PATH ]];
+then
+  echo "Another worker is fetching unshallow. Wait fetching to be done."
+
+  retry_times=0
+  until [ $retry_times -ge $RETRY_THRESHOLD ]; do
+      if [[ ! -d $REPO_SHALLOW_LOCK_PATH ]]; then
+        break
+      fi
+      retry_times=$[$retry_times+1]
+      sleep 10
+  done
+fi
+
+if $(git rev-parse --is-shallow-repository); then
+    mkdir -p $REPO_SHALLOW_LOCK_PATH
+    echo 'Repo is shallow. Fetching unshallow...'
     retry_times=0
     until [[ $retry_times -ge $RETRY_THRESHOLD ]]; do
         git fetch --unshallow && break
@@ -51,8 +72,10 @@ else
         retry_times=$[$retry_times+1]
         sleep 10
     done
+    rmdir $REPO_SHALLOW_LOCK_PATH
     echo 'Done.'
-    rmdir $CLONE_LOCK_PATH
+else
+    echo "Repo is unshallow."
 fi
 
 echo 'Updating local cached repo...'
