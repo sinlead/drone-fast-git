@@ -1,4 +1,7 @@
-FROM docker:git
+FROM --platform=$TARGETPLATFORM docker:git
+
+ARG BUILDPLATFORM
+ARG TARGETPLATFORM
 
 LABEL maintainer Wabilin <twelendil@protonmail.com>
 
