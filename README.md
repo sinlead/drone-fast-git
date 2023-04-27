@@ -4,7 +4,7 @@ A faster git clone/fetch plugin for Drone CI.
 
 ## build image
 ```
-docker build \
+DOCKER_DEFAULT_PLATFORM=linux/amd64 docker build \
     -t sinlead/drone-fast-git:{tag} \
     .
 ```
